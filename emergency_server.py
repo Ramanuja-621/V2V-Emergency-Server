@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
 
 app = Flask(__name__)
 
@@ -34,7 +36,7 @@ def accident():
         "latitude": data.get("latitude"),
         "longitude": data.get("longitude"),
         "severity": data.get("severity"),
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "time": datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
     }
 
     print("\n🚨 ACCIDENT ALERT RECEIVED 🚨")
