@@ -12,7 +12,15 @@ app = Flask(__name__)
 # CONFIGURATION
 # ============================================================
 
-DB_FILE = "accident_log.db"
+# Use Render's persistent-disk path when DB_FILE is configured.
+# Locally, this defaults to accident_log.db in the project folder.
+DB_FILE = os.environ.get("DB_FILE", "accident_log.db")
+
+# Create the parent directory when a full path such as /data/accident_log.db is used.
+_db_directory = os.path.dirname(os.path.abspath(DB_FILE))
+if _db_directory:
+    os.makedirs(_db_directory, exist_ok=True)
+
 IST = ZoneInfo("Asia/Kolkata")
 
 server_start_time = time.time()
@@ -23,8 +31,9 @@ server_start_time = time.time()
 # ============================================================
 
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA busy_timeout = 10000")
     return conn
 
 
